@@ -70,8 +70,23 @@ SIMPLE_JWT = {
 }
 
 # 6. CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True # Keep this True for now to test deployment easily
+CORS_ALLOWED_ORIGINS = [
+    "https://nearlink.vercel.app",
+    "http://localhost:5173", # Keep local dev working
+]
 
+# 4. Allow the specific headers you are using
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# 5. Very important for JWT and Login
+CORS_ALLOW_CREDENTIALS = True
 # 7. Templates
 TEMPLATES = [
     {
