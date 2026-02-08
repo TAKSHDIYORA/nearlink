@@ -3,6 +3,16 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 
+# Add this below your other CORS settings
+CORS_PREFLIGHT_MAX_AGE = 86400
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 # 1. Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
