@@ -2,14 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "nearlink_backend/nearlink_config/wsgi.py",
+      "src": "nearlink_config/wsgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "nearlink_config/wsgi.py"
+    },
+    {
       "src": "/(.*)",
-      "dest": "nearlink_backend/nearlink_config/wsgi.py"
+      "dest": "nearlink_config/wsgi.py"
     }
   ]
 }
