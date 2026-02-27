@@ -2,15 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "nearlink_config/wsgi.py",
+      "src": "nearlink_backend/nearlink_config/wsgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "nearlink_config/wsgi.py"
+      "dest": "nearlink_backend/nearlink_config/wsgi.py"
     }
-  ],
-  "installCommand": "pip install -r requirements.txt && python manage.py migrate"
+  ]
 }
