@@ -21,15 +21,16 @@ export default function AuthPage({ onLoginSuccess }) {
     try {
       if (isLogin) {
         // LOGIN LOGIC
-        const res = await API.post('auth/login/', { 
+        const res = await API.post('accounts/auth/login/', { 
           username: formData.username, 
           password: formData.password 
         });
         localStorage.setItem('access_token', res.data.access);
         onLoginSuccess(res.data.access);
+        localStorage.setItem('username', formData.username);
       } else {
         // SIGNUP LOGIC
-        await API.post('auth/register/', formData);
+        await API.post('accounts/auth/register/', formData);
         alert("Account created! Please login.");
         setIsLogin(true);
       }

@@ -6,7 +6,7 @@ export default function RequestsPage() {
   const [requests, setRequests] = useState([]);
 
   const fetchRequests = () => {
-    API.get('friends/requests/').then(res => setRequests(res.data));
+    API.get('accounts/friends/requests/').then(res => setRequests(res.data));
   };
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function RequestsPage() {
   const handleAction = async (requestId, action) => {
     try {
       // action will be 'accepted' or 'rejected'
-      await API.patch(`friends/requests/${requestId}/`, { action });
+      await API.patch(`accounts/friends/requests/${requestId}/`, { action });
       // Refresh the list
       fetchRequests();
       alert(`Request ${action}!`);

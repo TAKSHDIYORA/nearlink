@@ -7,7 +7,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     // Assuming you have an endpoint like /api/auth/me/ or similar
-    API.get('auth/me/').then(res => setProfile(res.data));
+    API.get('accounts/auth/me/').then(res => setProfile(res.data));
   }, []);
 
   if (!profile) return <div className="p-10 text-slate-400">Loading profile...</div>;

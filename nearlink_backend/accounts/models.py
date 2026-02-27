@@ -25,4 +25,5 @@ class FriendRequest(models.Model):
     class Meta:
         unique_together = ('sender','receiver')
     def __str__(self):
-        return f"{self.sender} -> {self.receiver} ({self.status})"         
+        return f"{self.sender} -> {self.receiver} ({self.status})"      
+    

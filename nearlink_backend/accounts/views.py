@@ -5,12 +5,10 @@ from rest_framework import generics,views,response,status,permissions
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
-#1. Search by username
 
 class UserSearchView(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -19,7 +17,6 @@ class UserSearchView(generics.ListAPIView):
         query = self.request.query_params.get('q','')
         return User.objects.filter(username__icontains=query).exclude(id=self.request.user.id) 
 
-#2. nearby users
 class NearbyUserView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -29,28 +26,25 @@ class NearbyUserView(generics.ListAPIView):
         print(self.request.user.latitude)
         if user.latitude and user.longitude:
            return User.objects.filter(
-               latitude__range = (user.latitude - 1,user.latitude+1),
-               longitude__range = (user.longitude -1,user.longitude+1)
+               latitude__range = (user.latitude - 0.1,user.latitude+0.1),
+               longitude__range = (user.longitude -0.1,user.longitude+0.1)
                ).exclude(id=user.id)
         return User.objects.none()   
                
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer              
 
 class SendFriendRequestView(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, receiver_id):
-        # 1. Use get_object_or_404 to prevent 500 errors
         receiver = get_object_or_404(User, id=receiver_id)
         
-        # 2. Self-check
         if receiver == request.user:
             return response.Response({"error": "You can't add yourself"}, status=400)
         
-        # 3. Check if a request ALREADY exists in EITHER direction
         existing_request = FriendRequest.objects.filter(
             (Q(sender=request.user, receiver=receiver) | 
              Q(sender=receiver, receiver=request.user))
@@ -64,7 +58,6 @@ class SendFriendRequestView(views.APIView):
             if existing_request.receiver == request.user:
                 return response.Response({"message": "This person already sent you a request! check your pending list."}, status=400)
 
-        # 4. If no request exists, create it
         FriendRequest.objects.create(
             sender=request.user,
             receiver=receiver,
@@ -107,7 +100,6 @@ class FriendsListView(generics.ListAPIView):
         flat_ids.discard(user.id)
         return User.objects.filter(id__in=flat_ids)     
     
-# Add this to your views.py
 class PendingListView(views.APIView):
     permission_classes = [IsAuthenticated]
 
@@ -125,7 +117,6 @@ class PendingListView(views.APIView):
 class CurrentUserView(views.APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        # You can use your UserSerializer here for better code
         user = request.user
         return response.Response({
             "username": user.username,
@@ -134,3 +125,4 @@ class CurrentUserView(views.APIView):
             "latitude": user.latitude,
             "longitude": user.longitude
         })           
+

@@ -10,7 +10,7 @@ export default function NearbyPage() {
   // Fetch nearby users on load
   const fetchNearby = async () => {
     try {
-      const res = await API.get('users/nearby/');
+      const res = await API.get('accounts/users/nearby/');
       setUsers(res.data);
     } catch (err) {
       console.error("Error fetching nearby users", err);
@@ -25,14 +25,14 @@ export default function NearbyPage() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return fetchNearby();
-    const res = await API.get(`users/search/?q=${searchQuery}`);
+    const res = await API.get(`accounts/users/search/?q=${searchQuery}`);
     setUsers(res.data);
   };
 
   // Connect Logic
   const handleConnect = async (receiverId) => {
     try {
-      await API.post(`friends/send/${receiverId}/`);
+      await API.post(`accounts/friends/send/${receiverId}/`);
       setSentRequests([...sentRequests, receiverId]);
       alert("Friend request sent!");
     } catch (err) {

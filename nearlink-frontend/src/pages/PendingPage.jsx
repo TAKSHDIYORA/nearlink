@@ -8,7 +8,7 @@ export default function PendingPage() {
 
   const fetchPending = async () => {
     try {
-      const res = await API.get('friends/pending/');
+      const res = await API.get('accounts/friends/pending/');
       setData(res.data);
       setLoading(false);
     } catch (err) {
@@ -20,7 +20,7 @@ export default function PendingPage() {
 
   const handleAction = async (requestId, action) => {
     try {
-      await API.patch(`friends/requests/${requestId}/`, { action });
+      await API.patch(`accounts/friends/requests/${requestId}/`, { action });
       fetchPending(); // Refresh both lists
     } catch (err) {
       alert("Action failed.");

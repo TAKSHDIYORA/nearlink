@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-
+from dotenv import load_dotenv
+load_dotenv()
 # Add this below your other CORS settings
 CORS_PREFLIGHT_MAX_AGE = 86400
 CORS_ALLOW_METHODS = [
@@ -17,7 +18,7 @@ CORS_ALLOW_METHODS = [
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Security Settings
-# Use env var for production, fallback for local dev
+# Use env var for production, fallback for local  dev
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback-key')
 
 # Set DEBUG to False in production
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # Your apps
     'accounts',
+    'chat',
 ]
 
 MIDDLEWARE = [

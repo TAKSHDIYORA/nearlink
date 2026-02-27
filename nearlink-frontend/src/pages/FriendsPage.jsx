@@ -7,7 +7,7 @@ export default function FriendsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    API.get('friends/list/')
+    API.get('accounts/friends/list/')
       .then(res => {
         setFriends(res.data);
         setLoading(false);

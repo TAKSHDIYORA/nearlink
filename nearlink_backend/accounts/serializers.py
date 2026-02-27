@@ -21,4 +21,4 @@ class RegisterSerializer(serializers.ModelSerializer):
             longitude = validate_data.get('longitude')
         )            
         return user
-
+    

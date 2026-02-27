@@ -1,8 +1,9 @@
-import { MapPin, Users, UserPlus, LogOut,User ,UserPenIcon } from 'lucide-react';
+import { MapPin, Users, UserPlus, LogOut,User ,UserPenIcon,MessageSquare } from 'lucide-react';
 
 export default function Sidebar({ activeTab, onTabChange, onLogout }) {
   const menuItems = [
     { id: 'nearby', name: 'Nearby', icon: MapPin },
+    { id: 'message', name: 'Messages', icon: MessageSquare },
     { id: 'friends', name: 'Friends', icon: Users },
     { id: 'requests', name: 'Requests', icon: UserPlus },
     { id: 'pending', name: 'Pending', icon: UserPenIcon },

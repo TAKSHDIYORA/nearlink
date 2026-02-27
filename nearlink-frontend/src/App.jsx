@@ -6,6 +6,8 @@ import RequestsPage from './pages/RequestsPage';
 import PendingPage from './pages/PendingPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
+import ChatPage from './pages/ChatPage';
+import MessagePage from './pages/MessagePage';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('access_token'));
@@ -23,6 +25,7 @@ export default function App() {
       case 'requests': return <RequestsPage />;
       case 'pending': return <PendingPage />;
       case 'profile': return <ProfilePage/>;
+      case 'message': return <MessagePage/>;
       default: return <NearbyPage />;
     }
   };
