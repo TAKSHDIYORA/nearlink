@@ -2,9 +2,11 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-from dotenv import load_dotenv
-load_dotenv()
-# Add this below your other CORS settings
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 CORS_PREFLIGHT_MAX_AGE = 86400
 CORS_ALLOW_METHODS = [
     "DELETE",
