@@ -75,6 +75,10 @@ class GroupMessageView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, group_id):
+
+
+
+        #hi
         # Ensure the user is actually a member of this group
         try:
             chat = ChatGroup.objects.get(id=group_id, members=request.user)
