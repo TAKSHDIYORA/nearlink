@@ -1,9 +1,13 @@
 from django.shortcuts import render,get_object_or_404
 from .models import User, FriendRequest
-from .serializers import UserSerializer,RegisterSerializer
+from .serializers import UserSerializer,RegisterSerializer,CustomTokenObtainPairSerializer
 from rest_framework import generics,views,response,status,permissions
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()

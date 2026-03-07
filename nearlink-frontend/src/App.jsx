@@ -6,8 +6,10 @@ import RequestsPage from './pages/RequestsPage';
 import PendingPage from './pages/PendingPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
-import ChatPage from './pages/ChatPage';
-import MessagePage from './pages/MessagePage';
+import { BrowserRouter as Router } from 'react-router-dom';
+// import ChatPage from './pages/ChatPage';
+// import MessagePage from './pages/MessagePage';
+import UnifiedChatPage from './pages/UnifiedChatPage';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('access_token'));
@@ -21,16 +23,17 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'nearby': return <NearbyPage />;
-      case 'friends': return <FriendsPage />;
+      case 'friends': return <FriendsPage onTabChange={setActiveTab} />;
       case 'requests': return <RequestsPage />;
       case 'pending': return <PendingPage />;
       case 'profile': return <ProfilePage/>;
-      case 'message': return <MessagePage/>;
+      case 'message': return <UnifiedChatPage/>;
       default: return <NearbyPage />;
     }
   };
 
   return (
+    <Router>
     <div className="flex min-h-screen bg-slate-50">
       {/* 1. Sidebar Component Injected */}
       <Sidebar 
@@ -55,5 +58,6 @@ export default function App() {
         </div>
       </main>
     </div>
+    </Router>
   );
 }

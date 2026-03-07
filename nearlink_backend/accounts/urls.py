@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import UserListView,UserSearchView,NearbyUserView,RegisterView,SendFriendRequestView,ManageFriendRequestView,FriendsListView,PendingListView,CurrentUserView
+from .views import UserListView,UserSearchView,NearbyUserView,RegisterView,SendFriendRequestView,ManageFriendRequestView,FriendsListView,PendingListView,CurrentUserView,MyLoginView
 from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshView
 # from accounts.views import RegisterView
 
 urlpatterns = [
     path('auth/me/',CurrentUserView.as_view(),name='curr_user'),
     path('auth/register/',RegisterView.as_view(),name='auth_register'),
-    path('auth/login/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
+    path('auth/login/',MyLoginView.as_view(),name='token_obtain_pair'),
     path('auth/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
     path('users/',UserListView.as_view(),name='user-list'),
     path('users/search/',UserSearchView.as_view(),name='user-search'),

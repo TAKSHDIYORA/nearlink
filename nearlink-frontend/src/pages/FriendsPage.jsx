@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, UserMinus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+// import { setTab } from '../App';
 import API from '../api';
 
-export default function FriendsPage() {
+export default function FriendsPage({onTabChange}) {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,6 +12,7 @@ export default function FriendsPage() {
     API.get('accounts/friends/list/')
       .then(res => {
         setFriends(res.data);
+        print(res.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -28,7 +31,7 @@ export default function FriendsPage() {
           <p className="text-slate-500 text-sm mt-1 mb-6">{friend.bio || "No bio added yet."}</p>
           
           <div className="flex gap-2 w-full">
-            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100">
+            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" onClick={() => {setTab('message'); window.startChatWith = friend.id;}}>
               <MessageCircle size={18} /> Chat
             </button>
             <button className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-50 hover:text-red-500 transition">
