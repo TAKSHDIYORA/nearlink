@@ -1,13 +1,29 @@
-asgiref==3.11.1
-dj-database-url==3.1.0
+# --- Base Framework ---
 Django==6.0.2
-django-cors-headers==4.9.0
 djangorestframework==3.16.1
-djangorestframework_simplejwt==5.5.1
-psycopg==3.3.2
-psycopg-binary==3.3.2
-PyJWT==2.11.0
+asgiref==3.11.1
 sqlparse==0.5.5
 tzdata==2025.3
-whitenoise==6.11.0
+
+# --- Authentication & Security ---
+djangorestframework_simplejwt==5.5.1
+PyJWT==2.11.0
+django-cors-headers==4.9.0
 python-dotenv==1.0.1
+
+# --- Database (PostgreSQL/Neon) ---
+dj-database-url==3.1.0
+psycopg==3.3.2
+psycopg-binary==3.3.2
+
+# --- Real-Time Messaging ---
+pusher==3.3.2
+
+# --- Cloud Storage & Media (Feed App) ---
+cloudinary==1.41.0
+django-cloudinary-storage==0.3.0
+Pillow==10.4.0
+
+# --- Production Serving ---
+whitenoise==6.11.0
+gunicorn==23.0.0

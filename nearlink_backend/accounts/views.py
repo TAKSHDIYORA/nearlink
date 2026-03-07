@@ -23,7 +23,7 @@ class NearbyUserView(generics.ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        print(self.request.user.latitude)
+        # print(self.request.user.latitude)
         if user.latitude and user.longitude:
            return User.objects.filter(
                latitude__range = (user.latitude - 0.1,user.latitude+0.1),

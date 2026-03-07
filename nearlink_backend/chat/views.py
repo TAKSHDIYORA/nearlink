@@ -70,7 +70,6 @@ class CreateGroupView(views.APIView):
         }, status=201)    
         
         
-# Add this class to your views.py
 class GroupMessageView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
