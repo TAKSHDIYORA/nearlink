@@ -21,6 +21,7 @@ export default function AuthPage({ onLoginSuccess }) {
     try {
       if (isLogin) {
         // LOGIN LOGIC
+        
         const res = await API.post('accounts/auth/login/', { 
           username: formData.username, 
           password: formData.password 
@@ -28,6 +29,7 @@ export default function AuthPage({ onLoginSuccess }) {
         localStorage.setItem('access_token', res.data.access);
         onLoginSuccess(res.data.access);
         localStorage.setItem('username', formData.username);
+     
       } else {
         // SIGNUP LOGIC
         await API.post('accounts/auth/register/', formData);
@@ -35,7 +37,9 @@ export default function AuthPage({ onLoginSuccess }) {
         setIsLogin(true);
       }
     } catch (err) {
-      alert("Authentication failed. Please check your details.");
+      // alert("Authentication failed. Please check your details.");
+      alert(err.response.data.message);
+      
     }
   };
 
