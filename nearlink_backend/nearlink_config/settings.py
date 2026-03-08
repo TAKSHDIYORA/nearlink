@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # Your apps
     'accounts',
     'chat',
-    'posts',
+
 ]
 
 MIDDLEWARE = [
