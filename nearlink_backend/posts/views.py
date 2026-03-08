@@ -73,24 +73,6 @@ class UserPostListView(generics.ListAPIView):
         return Post.objects.filter(author_id=user_id).order_by('-created_at')
 
 
-# ─── LIKE VIEW ───────────────────────────────────────────────────────────────
-
-class PostLikeToggleView(APIView):
-    """
-    POST /api/posts/<id>/like/  → Like or unlike a post
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        if post.likes.filter(id=request.user.id).exists():
-            post.likes.remove(request.user)
-            return Response({'liked': False}, status=status.HTTP_200_OK)
-        else:
-            post.likes.add(request.user)
-            return Response({'liked': True}, status=status.HTTP_200_OK)
-
-
 # ─── COMMENT VIEWS ───────────────────────────────────────────────────────────
 
 class CommentListCreateView(generics.ListCreateAPIView):
@@ -147,6 +129,24 @@ class BookmarkedPostsView(generics.ListAPIView):
 
     def get_queryset(self):
         return Bookmark.objects.filter(user=self.request.user).order_by('-created_at')
+
+# ─── LIKE VIEW ───────────────────────────────────────────────────────────────
+
+class PostLikeToggleView(APIView):
+    """
+    POST /api/posts/<id>/like/  → Like or unlike a post
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            return Response({'liked': False}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(request.user)
+            return Response({'liked': True}, status=status.HTTP_200_OK)
+
 
 
 # ─── SHARE VIEWS ─────────────────────────────────────────────────────────────
