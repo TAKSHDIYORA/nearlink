@@ -26,6 +26,8 @@ const  App = () => {
   useEffect(() => {
     if (token) {
       navigate(`/${activeTab}`);
+    }else{
+      navigate('login');
     }
   }, [activeTab, navigate, token]);
 
