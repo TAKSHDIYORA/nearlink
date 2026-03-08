@@ -27,8 +27,9 @@ export default function AuthPage({ onLoginSuccess }) {
           password: formData.password 
         });
         localStorage.setItem('access_token', res.data.access);
+         localStorage.setItem('username', formData.username);
         onLoginSuccess(res.data.access);
-        localStorage.setItem('username', formData.username);
+       
      
       } else {
         // SIGNUP LOGIC

@@ -102,6 +102,7 @@ class FriendsListView(generics.ListAPIView):
         
         flat_ids = set([item for sublist in friend_ids for item in sublist])
         flat_ids.discard(user.id)
+        print(User.objects.filter(id__in=flat_ids))
         return User.objects.filter(id__in=flat_ids)     
     
 class PendingListView(views.APIView):
