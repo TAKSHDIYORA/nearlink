@@ -1,13 +1,14 @@
-import { MapPin, Users, UserPlus, LogOut,User ,UserPenIcon,MessageSquare } from 'lucide-react';
+import { MapPin, Users, UserPlus, LogOut, User, UserPenIcon, MessageSquare } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
-export default function Sidebar({ activeTab, onTabChange, onLogout }) {
+export default function Sidebar({ onLogout }) {
   const menuItems = [
-    { id: 'nearby', name: 'Nearby', icon: MapPin },
-    { id: 'message', name: 'Messages', icon: MessageSquare },
-    { id: 'friends', name: 'Friends', icon: Users },
-    { id: 'requests', name: 'Requests', icon: UserPlus },
-    { id: 'pending', name: 'Pending', icon: UserPenIcon },
-    { id: 'profile', name: 'My Profile', icon: User },
+    { id: 'nearby', name: 'Nearby', icon: MapPin, path: '/nearby' },
+    { id: 'message', name: 'Messages', icon: MessageSquare, path: '/message' },
+    { id: 'friends', name: 'Friends', icon: Users, path: '/friends' },
+    { id: 'requests', name: 'Requests', icon: UserPlus, path: '/requests' },
+    { id: 'pending', name: 'Pending', icon: UserPenIcon, path: '/pending' },
+    { id: 'profile', name: 'My Profile', icon: User, path: '/profile' },
   ];
 
   return (
@@ -18,23 +19,25 @@ export default function Sidebar({ activeTab, onTabChange, onLogout }) {
 
       <nav className="flex-1 px-4 space-y-2">
         {menuItems.map((item) => (
-          <button
+          <NavLink
             key={item.id}
-            onClick={() => onTabChange(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all ${
-              activeTab === item.id 
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' 
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-            }`}
+            to={item.path}
+            className={({ isActive }) =>
+              `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all ${
+                isActive
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+              }`
+            }
           >
             <item.icon size={20} />
             {item.name}
-          </button>
+          </NavLink>
         ))}
       </nav>
 
       <div className="p-6 border-t border-slate-50">
-        <button 
+        <button
           onClick={onLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-medium"
         >
