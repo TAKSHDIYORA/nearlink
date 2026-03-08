@@ -1,21 +1,29 @@
 import { useState, useEffect } from 'react';
-import { MessageCircle, UserMinus } from 'lucide-react';
+import { MessageCircle, Table, UserMinus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // import { setTab } from '../App';
 import API from '../api';
 
 export default function FriendsPage({onTabChange}) {
+  
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    API.get('accounts/friends/list/')
-      .then(res => {
-        setFriends(res.data);
-        print(res.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+ useEffect(() => {
+    const fetchFriendList = () => {
+      setLoading(true); // Ensure loading is true when starting
+      API.get('accounts/friends/list/')
+        .then(res => {
+          setFriends(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch friends:", err);
+          setLoading(false);
+        });
+    };
+
+    fetchFriendList();
   }, []);
 
   if (loading) return <div className="text-slate-400">Loading your inner circle...</div>;
@@ -31,7 +39,7 @@ export default function FriendsPage({onTabChange}) {
           <p className="text-slate-500 text-sm mt-1 mb-6">{friend.bio || "No bio added yet."}</p>
           
           <div className="flex gap-2 w-full">
-            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" onClick={() => {setTab('message'); window.startChatWith = friend.id;}}>
+            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" onClick={onTabChange}>
               <MessageCircle size={18} /> Chat
             </button>
             <button className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-50 hover:text-red-500 transition">

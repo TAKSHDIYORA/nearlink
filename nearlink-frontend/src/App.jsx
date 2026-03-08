@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './components/SideBar';
 import NearbyPage from './pages/NearByPage';
 import FriendsPage from './pages/FriendsPage';
@@ -6,34 +6,35 @@ import RequestsPage from './pages/RequestsPage';
 import PendingPage from './pages/PendingPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
-import { BrowserRouter as Router } from 'react-router-dom';
+import {  Route, Routes, useNavigate } from 'react-router-dom';
 // import ChatPage from './pages/ChatPage';
 // import MessagePage from './pages/MessagePage';
 import UnifiedChatPage from './pages/UnifiedChatPage';
 
-export default function App() {
+const  App = () => {
+   const navigate = useNavigate();
   const [token, setToken] = useState(localStorage.getItem('access_token'));
   const [activeTab, setActiveTab] = useState('nearby');
 
   // Guard: If no token, show login (simplified for this example)
  if (!token) {
-    return <AuthPage onLoginSuccess={(newToken) => setToken(newToken)} />;
+    return <AuthPage onLoginSuccess={(newToken) => {setToken(newToken);
+      setActiveTab = 'nearby';
+    }} />;
   }
-  // Logic to decide WHICH page component to "inject"
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'nearby': return <NearbyPage />;
-      case 'friends': return <FriendsPage onTabChange={setActiveTab} />;
-      case 'requests': return <RequestsPage />;
-      case 'pending': return <PendingPage />;
-      case 'profile': return <ProfilePage/>;
-      case 'message': return <UnifiedChatPage/>;
-      default: return <NearbyPage />;
+
+  useEffect(() => {
+    if (token) {
+      navigate(`/${activeTab}`);
+    }else{
+      navigate('login');
     }
-  };
+  }, [activeTab, navigate, token]);
+
+  
 
   return (
-    <Router>
+   
     <div className="flex min-h-screen bg-slate-50">
       {/* 1. Sidebar Component Injected */}
       <Sidebar 
@@ -41,8 +42,7 @@ export default function App() {
         onTabChange={(tab) => setActiveTab(tab)} 
         onLogout={() => { localStorage.clear(); setToken(null); }}
       />
-
-      {/* 2. Main Area where "Pages" are swapped */}
+      
       <main className="flex-1 p-10">
         <div className="max-w-5xl mx-auto">
           {/* Header that changes based on selection */}
@@ -53,11 +53,23 @@ export default function App() {
 
           {/* Injected Content */}
           <div className="animate-in fade-in duration-500">
-            {renderContent()}
+            <Routes>
+         <Route path="/nearby" element={<NearbyPage/>}/>
+         <Route path="/login" element={<AuthPage/>} />
+         <Route path="/message" element={<UnifiedChatPage/>}/>
+         <Route path="/friends" element={<FriendsPage onTabChange={()=> setActiveTab('message')}/>} />
+          <Route path="/requests" element={<RequestsPage/>} />
+           <Route path="/pending" element={<PendingPage/>} />
+            <Route path="/profile" element={<ProfilePage/>} />
+      </Routes>
           </div>
         </div>
       </main>
+
+      
     </div>
-    </Router>
+    
   );
 }
+
+export default App;
