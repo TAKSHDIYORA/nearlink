@@ -39,7 +39,7 @@ export default function FriendsPage({onTabChange}) {
           <p className="text-slate-500 text-sm mt-1 mb-6">{friend.bio || "No bio added yet."}</p>
           
           <div className="flex gap-2 w-full">
-            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" onClick={onTabChange}>
+            <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100" onClick={() => onTabChange(friend.id)}>
               <MessageCircle size={18} /> Chat
             </button>
             <button className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-50 hover:text-red-500 transition">

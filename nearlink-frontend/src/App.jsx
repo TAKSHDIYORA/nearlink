@@ -52,7 +52,8 @@ const App = () => {
               <Route path="/nearby" element={<NearbyPage />} />
               <Route path="/login" element={<AuthPage />} />
               <Route path="/message" element={<UnifiedChatPage />} />
-              <Route path="/friends" element={<FriendsPage />} />
+              <Route path="/message/:friendId" element={<UnifiedChatPage />} />
+              <Route path="/friends" element={<FriendsPage onTabChange={(friendId)=>navigate(`/message/${friendId}`)}/>} />
               <Route path="/requests" element={<RequestsPage />} />
               <Route path="/pending" element={<PendingPage />} />
               <Route path="/profile" element={<ProfilePage />} />

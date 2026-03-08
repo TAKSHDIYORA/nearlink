@@ -3,7 +3,7 @@ import API from '../api';
 import ChatPage from './ChatPage';
 import CreateGroupModal from './CreateGroupModal';
 import { MessageCircle, Users, Plus, UserMinus } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 export default function UnifiedChatPage() {
     // const location = useLocation();
@@ -13,11 +13,45 @@ export default function UnifiedChatPage() {
   const [view, setView] = useState('chats'); // Switch between 'chats' and 'friends'
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect( () => {
+  const {friendId} = useParams();
+useEffect( () => {
      fetchData();
   }, []);
 
+  useEffect(() => {
+  if (friendId && friends.length > 0) {
+    startChatWithFriend(friendId);
+  }
+}, [friendId, friends]); // Only runs when a new ID comes from the URL or friends finish loading
+
+const startChatWithFriend = async (targetId) => {
+  // Convert targetId to number if it's coming from URL params as a string
+  const numericId = Number(targetId);
+  
+  try {
+    const res = await API.get(`chat/with/${numericId}/`);
+    const friendInfo = friends.find(f => f.id === numericId);
+    
+    const formattedRoom = {
+      id: res.data.group_id,
+      display_name: friendInfo ? friendInfo.username : "Chat",
+      is_group: false,
+      other_user_id: numericId
+    };
+
+    setRooms(prevRooms => {
+      const exists = prevRooms.find(r => r.id === formattedRoom.id);
+      if (!exists) return [formattedRoom, ...prevRooms];
+      return prevRooms;
+    });
+
+    setSelectedRoom(formattedRoom);
+  } catch (err) {
+    console.error("Could not initialize chat session", err);
+  }
+};
+
+  
   const fetchData =  async () => {
     setLoading(true);
     try {
@@ -43,36 +77,7 @@ export default function UnifiedChatPage() {
   };
 
   // Logic to handle your 'chat/with/<id>/' URL
-  const startChatWithFriend = async (friendId) => {
-    try {
-      // 1. Get the session from backend
-      const res = await API.get(`chat/with/${friendId}/`);
-      
-      // 2. Format the data to match what your Sidebar/ChatPage expects
-      // We need to find the friend's name from our existing friends list
-      const friendInfo = friends.find(f => f.id === friendId);
-      
-      const formattedRoom = {
-        id: res.data.group_id, // Backend returns group_id
-        display_name: friendInfo ? friendInfo.username : "Chat",
-        is_group: false,
-        other_user_id: friendId
-      };
-
-      // 3. Update rooms list if it's not already there
-      setRooms(prevRooms => {
-        const exists = prevRooms.find(r => r.id === formattedRoom.id);
-        if (!exists) return [formattedRoom, ...prevRooms];
-        return prevRooms;
-      });
-
-      // 4. Set the active room to open the ChatPage
-      setSelectedRoom(formattedRoom);
-      
-    } catch (err) {
-      console.error("Could not initialize chat session", err);
-    }
-  };
+  
   return (
   <div className="flex bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden" style={{ height: '80vh' }}>
     
@@ -94,7 +99,7 @@ export default function UnifiedChatPage() {
           rooms.map(room => (
             <div 
               key={room.id}
-              onClick={() => setSelectedRoom(room)}
+              onClick={() => {setSelectedRoom(room)}}
               className={`p-4 mb-1 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${
                 selectedRoom?.id === room.id ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-white text-slate-600'
               }`}
