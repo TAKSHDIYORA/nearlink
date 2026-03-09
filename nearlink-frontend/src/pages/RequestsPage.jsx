@@ -1,67 +1,83 @@
 import { useState, useEffect } from 'react';
-import { Check, X, UserPlus } from 'lucide-react';
+import { Clock, Check, X, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import API from '../api';
 
 export default function RequestsPage() {
-  const [requests, setRequests] = useState([]);
+  const [data, setData] = useState({ received: [], sent: [] });
+  const [loading, setLoading] = useState(true);
 
-  const fetchRequests = () => {
-    API.get('accounts/friends/requests/').then(res => setRequests(res.data));
-  };
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
-  const handleAction = async (requestId, action) => {
+  const fetchPending = async () => {
     try {
-      // action will be 'accepted' or 'rejected'
-      await API.patch(`accounts/friends/requests/${requestId}/`, { action });
-      // Refresh the list
-      fetchRequests();
-      alert(`Request ${action}!`);
+      const res = await API.get('accounts/friends/pending/');
+      setData(res.data);
+      setLoading(false);
     } catch (err) {
-      alert("Something went wrong.");
+      console.error("Error fetching pending requests");
     }
   };
 
-  return (
-    <div className="max-w-2xl space-y-4">
-      {requests.length > 0 ? requests.map(req => (
-        <div key={req.id} className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 flex items-center justify-between animate-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold">
-              {req.sender[0].toUpperCase()}
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900">{req.sender}</h4>
-              <p className="text-xs text-slate-500 font-medium">wants to connect</p>
-            </div>
-          </div>
+  useEffect(() => { fetchPending(); }, []);
 
-          <div className="flex gap-2">
-            <button 
-              onClick={() => handleAction(req.id, 'accepted')}
-              className="p-3 bg-green-50 text-green-600 rounded-2xl hover:bg-green-600 hover:text-white transition-all shadow-sm"
-            >
-              <Check size={20} />
-            </button>
-            <button 
-              onClick={() => handleAction(req.id, 'rejected')}
-              className="p-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
-            >
-              <X size={20} />
-            </button>
-          </div>
+  const handleAction = async (requestId, action) => {
+    try {
+      await API.patch(`accounts/friends/requests/${requestId}/`, { action });
+      fetchPending(); // Refresh both lists
+    } catch (err) {
+      alert("Action failed.");
+    }
+  };
+
+  if (loading) return <div className="p-10 text-slate-400">Loading requests...</div>;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      
+      {/* 📥 INCOMING REQUESTS */}
+      <section>
+        <div className="flex items-center gap-2 mb-6">
+          <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl"><ArrowDownLeft size={20}/></div>
+          <h3 className="text-xl font-bold text-slate-800">Received Requests</h3>
         </div>
-      )) : (
-        <div className="bg-slate-100/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] p-12 text-center">
-          <div className="inline-flex p-4 bg-white rounded-3xl shadow-sm mb-4">
-            <UserPlus className="text-slate-300" size={32} />
-          </div>
-          <p className="text-slate-500 font-medium">No pending friend requests.</p>
+
+        <div className="space-y-4">
+          {data.received.length > 0 ? data.received.map(req => (
+            <div key={req.id} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold">{req.username[0]}</div>
+                <span className="font-bold">{req.username}</span>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => handleAction(req.id, 'accepted')} className="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition"><Check size={18}/></button>
+                <button onClick={() => handleAction(req.id, 'rejected')} className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition"><X size={18}/></button>
+              </div>
+            </div>
+          )) : <p className="text-slate-400 text-sm italic">No one is waiting for your reply.</p>}
         </div>
-      )}
+      </section>
+
+      {/* 📤 OUTGOING REQUESTS */}
+      <section>
+        <div className="flex items-center gap-2 mb-6">
+          <div className="p-2 bg-blue-100 text-blue-600 rounded-xl"><ArrowUpRight size={20}/></div>
+          <h3 className="text-xl font-bold text-slate-800">Sent Requests</h3>
+        </div>
+
+        <div className="space-y-4">
+          {data.sent.length > 0 ? data.sent.map(req => (
+            <div key={req.id} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between opacity-80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-400">{req.username[0]}</div>
+                <div>
+                  <p className="font-bold text-slate-700">{req.username}</p>
+                  <p className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Waiting for response</p>
+                </div>
+              </div>
+              <div className="p-2 text-slate-300"><Clock size={18}/></div>
+            </div>
+          )) : <p className="text-slate-400 text-sm italic">You haven't sent any requests.</p>}
+        </div>
+      </section>
+
     </div>
   );
 }

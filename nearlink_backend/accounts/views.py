@@ -5,6 +5,7 @@ from rest_framework import generics,views,response,status,permissions
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import ValidationError
 
 class MyLoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -20,7 +21,20 @@ class UserSearchView(generics.ListAPIView):
     
     def get_queryset(self):
         query = self.request.query_params.get('q','')
-        return User.objects.filter(username__icontains=query).exclude(id=self.request.user.id) 
+         # 1. Find all accepted friend IDs
+        # We check both directions: where user is sender OR receiver
+        user = self.request.user
+        friends_as_sender = FriendRequest.objects.filter(
+            sender=user, status='accepted'
+        ).values_list('receiver_id', flat=True)
+        
+        friends_as_receiver = FriendRequest.objects.filter(
+            receiver=user, status='accepted'
+        ).values_list('sender_id', flat=True)
+
+        # Combine them into one set of IDs to exclude
+        friend_ids = set(list(friends_as_sender) + list(friends_as_receiver))
+        return User.objects.filter(username__icontains=query).exclude(id=self.request.user.id).exclude(id__in=friend_ids) 
 
 class NearbyUserView(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -28,13 +42,35 @@ class NearbyUserView(generics.ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        # print(self.request.user.latitude)
-        if user.latitude and user.longitude:
-           return User.objects.filter(
-               latitude__range = (user.latitude - 0.1,user.latitude+0.1),
-               longitude__range = (user.longitude -0.1,user.longitude+0.1)
-               ).exclude(id=user.id)
-        return User.objects.none()   
+        
+        if not (user.latitude and user.longitude):
+            return User.objects.none()
+        
+        if user.latitude is None or user.longitude is None or user.latitude == -1 or user.longitude == -1:
+            raise ValidationError({
+                "detail": "Please enable location services to see nearby users.",
+                "code": "location_disabled"
+            })
+
+        # 1. Get IDs of EVERYONE who has a relationship with this user
+        # (Sent requests, received requests, accepted friends, or pending)
+        interacted_user_ids = FriendRequest.objects.filter(
+            Q(sender=user) | Q(receiver=user)
+        ).values_list('sender_id', 'receiver_id')
+
+        # Flatten the list of tuples into a single set of IDs
+        # e.g., [(1, 2), (1, 5)] becomes {1, 2, 5}
+        exclude_ids = {uid for tup in interacted_user_ids for uid in tup}
+
+        # 2. Filter nearby and exclude those IDs + self
+        return User.objects.filter(
+            latitude__range=(user.latitude - 0.1, user.latitude + 0.1),
+            longitude__range=(user.longitude - 0.1, user.longitude + 0.1)
+        ).exclude(
+            id__in=exclude_ids
+        ).exclude(
+            id=user.id
+        )
                
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -76,7 +112,7 @@ class ManageFriendRequestView(views.APIView):
     
     def get(self,request):
         requests = FriendRequest.objects.filter(receiver=request.user,status='pending')
-        data = [{"id":r.id,"sender":r.sender.username} for r in requests] 
+        data = [{"id":r.id,"sender":r.sender.username,"sender_id":r.sender.id} for r in requests] 
         return response.Response(data)
     
     def patch(self,request,request_id):
@@ -130,5 +166,18 @@ class CurrentUserView(views.APIView):
             "bio": user.bio,
             "latitude": user.latitude,
             "longitude": user.longitude
-        })           
+        })  
+    def patch(self, request):
+        user = request.user
+        lat = request.data.get('latitude')
+        lng = request.data.get('longitude')
+        
+        if lat is not None and lng is not None:
+            user.latitude = lat
+            user.longitude = lng
+            user.save()
+            return response.Response({"message": "Location updated successfully"})
+        return response.Response({"error": "Invalid coordinates"}, status=400)    
+        
+                 
 

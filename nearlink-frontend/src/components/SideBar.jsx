@@ -7,7 +7,6 @@ export default function Sidebar({ onLogout }) {
     { id: 'message', name: 'Messages', icon: MessageSquare, path: '/message' },
     { id: 'friends', name: 'Friends', icon: Users, path: '/friends' },
     { id: 'requests', name: 'Requests', icon: UserPlus, path: '/requests' },
-    { id: 'pending', name: 'Pending', icon: UserPenIcon, path: '/pending' },
     { id: 'profile', name: 'My Profile', icon: User, path: '/profile' },
   ];
 

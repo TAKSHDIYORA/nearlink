@@ -33,6 +33,10 @@ export default function AuthPage({ onLoginSuccess }) {
      
       } else {
         // SIGNUP LOGIC
+        if(!(formData.latitude)&&!(formData.longitude)){
+          formData.latitude = -1;
+          formData.longitude = -1;
+        }
         await API.post('accounts/auth/register/', formData);
         alert("Account created! Please login.");
         setIsLogin(true);

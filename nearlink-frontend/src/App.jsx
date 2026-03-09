@@ -4,7 +4,7 @@ import Sidebar from './components/SideBar';
 import NearbyPage from './pages/NearByPage';
 import FriendsPage from './pages/FriendsPage';
 import RequestsPage from './pages/RequestsPage';
-import PendingPage from './pages/PendingPage';
+// import PendingPage from './pages/PendingPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
 import UnifiedChatPage from './pages/UnifiedChatPage';
@@ -55,7 +55,6 @@ const App = () => {
               <Route path="/message/:friendId" element={<UnifiedChatPage />} />
               <Route path="/friends" element={<FriendsPage onTabChange={(friendId)=>navigate(`/message/${friendId}`)}/>} />
               <Route path="/requests" element={<RequestsPage />} />
-              <Route path="/pending" element={<PendingPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </div>
