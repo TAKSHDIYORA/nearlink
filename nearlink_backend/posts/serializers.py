@@ -1,16 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Comment, Bookmark, SharedPost
 
-
-class CommentSerializer(serializers.ModelSerializer):
-    author_username = serializers.ReadOnlyField(source='author.username')
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'post', 'author', 'author_username', 'content', 'created_at']
-        read_only_fields = ['author', 'created_at', 'post']
-
-
 class PostSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     likes_count = serializers.SerializerMethodField()
@@ -62,6 +52,16 @@ class BookmarkSerializer(serializers.ModelSerializer):
         model = Bookmark
         fields = ['id', 'post', 'created_at']
         read_only_fields = ['user', 'created_at']
+
+class CommentSerializer(serializers.ModelSerializer):
+    author_username = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'author', 'author_username', 'content', 'created_at']
+        read_only_fields = ['author', 'created_at', 'post']
+
+
 
 
 class SharedPostSerializer(serializers.ModelSerializer):

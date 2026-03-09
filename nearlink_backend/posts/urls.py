@@ -18,9 +18,6 @@ urlpatterns = [
     path('<int:pk>/', PostDetailView.as_view(), name='post-detail'),             # GET / PUT / DELETE a post
     path('user/<int:user_id>/', UserPostListView.as_view(), name='user-posts'),  # GET posts by specific user
 
-    # ── Likes ──────────────────────────────────────────────
-    path('<int:pk>/like/', PostLikeToggleView.as_view(), name='post-like'),      # POST to like/unlike
-
     # ── Comments ───────────────────────────────────────────
     path('<int:pk>/comments/', CommentListCreateView.as_view(), name='post-comments'),              # GET / POST comments
     path('<int:pk>/comments/<int:comment_id>/', CommentDeleteView.as_view(), name='comment-delete'),# DELETE comment
@@ -32,4 +29,8 @@ urlpatterns = [
     # ── Share ──────────────────────────────────────────────
     path('<int:pk>/share/', SharePostView.as_view(), name='post-share'),             # POST to share with a friend
     path('shared-with-me/', SharedWithMeView.as_view(), name='shared-with-me'),      # GET posts shared with me
+
+     # ── Likes ──────────────────────────────────────────────
+    path('<int:pk>/like/', PostLikeToggleView.as_view(), name='post-like'),      # POST to like/unlike
+
 ]
